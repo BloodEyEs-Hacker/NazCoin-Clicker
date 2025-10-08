@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NazCoin Clicker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .coins-display {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .click-area {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 5px solid #FF8C00;
+            box-shadow: 0 10px 30px rgba(255,165,0,0.4);
+            transition: all 0.1s;
+            user-select: none;
+        }
+        .click-area:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(255,165,0,0.6);
+        }
+        .click-area .icon {
+            font-size: 4em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .upgrade-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .upgrade-price {
+            float: right;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .boost-item {
+            background: rgba(255,215,0,0.2);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+        }
+        .hidden {
+            display: none;
+        }
+        .tab-content {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .tab-btn {
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: rgba(255,255,255,0.3);
+        }
+        .flying-coin {
+            position: fixed;
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🪙 NazCoin Clicker</h1>
+            <div class="coins-display" id="coins">0 NazCoin</div>
+        </div>
+
+        <div class="click-area" id="clickButton">
+            <div class="icon">👆</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div>💪 Сила клика</div>
+                <div class="stat-value" id="power">1</div>
+            </div>
+            <div class="stat">
+                <div>⚡ Энергия</div>
+                <div class="stat-value" id="energy">100/100</div>
+            </div>
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="openTab('shop')">🛍️ Магазин</button>
+            <button class="tab-btn" onclick="openTab('boosts')">🚀 Бусты</button>
+            <button class="tab-btn" onclick="openTab('leaderboard')">🏆 Топ</button>
+        </div>
+
+        <div id="shop" class="tab-content">
+            <div class="upgrade-item" onclick="buyUpgrade('click_power')">
+                💪 Сила клика <span class="upgrade-price" id="click_power_price">10 🪙</span>
+                <div style="font-size: 0.8em;">+1 к силе клика</div>
+            </div>
+            <div class="upgrade-item" onclick="buyUpgrade('energy_capacity')">
+                🔋 Ёмкость энергии <span class="upgrade-price" id="energy_capacity_price">20 🪙</span>
+                <div style="font-size: 0.8em;">+10 к максимум энергии</div>
+            </div>
+            <div class="upgrade-item" onclick="buyUpgrade('energy_regen')">
+                🔄 Регенерация <span class="upgrade-price" id="energy_regen_price">30 🪙</span>
+                <div style="font-size: 0.8em;">+0.5 к восстановлению</div>
+            </div>
+            <div class="upgrade-item" onclick="buyUpgrade('auto_clicker')">
+                🤖 Автокликер <span class="upgrade-price" id="auto_clicker_price">100 🪙</span>
+                <div style="font-size: 0.8em;">Автоматические клики</div>
+            </div>
+        </div>
+
+        <div id="boosts" class="tab-content hidden">
+            <div class="boost-item" onclick="buyBoost('double_coin')">
+                💰 Удвоение монет <span class="upgrade-price">50 🪙</span>
+                <div style="font-size: 0.8em;">x2 монет на 30 сек</div>
+            </div>
+            <div class="boost-item" onclick="buyBoost('unlimited_energy')">
+                ⚡ Беск. энергия <span class="upgrade-price">80 🪙</span>
+                <div style="font-size: 0.8em;">Беск. энергия на 15 сек</div>
+            </div>
+            <div class="boost-item" onclick="buyBoost('mega_click')">
+                🚀 Мега-клик <span class="upgrade-price">120 🪙</span>
+                <div style="font-size: 0.8em;">+10 силы на 25 сек</div>
+            </div>
+        </div>
+
+        <div id="leaderboard" class="tab-content hidden">
+            <div style="text-align: left; margin: 10px 0;">
+                <div>🥇 NazMaster - 1,500,000 🪙</div>
+                <div>🥈 CoinKing - 1,200,000 🪙</div>
+                <div>🥉 ClickPro - 980,000 🪙</div>
+                <div>4. TurboClick - 750,000 🪙</div>
+                <div>5. MoneyMaker - 500,000 🪙</div>
+                <div style="margin-top: 10px; font-weight: bold;">Ты: <span id="player_rank">0 🪙</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Игровые данные
+        let gameData = {
+            coins: 0,
+            clickPower: 1,
+            energy: 100,
+            maxEnergy: 100,
+            energyRegen: 1,
+            upgrades: {
+                click_power: { level: 0, price: 10 },
+                energy_capacity: { level: 0, price: 20 },
+                energy_regen: { level: 0, price: 30 },
+                auto_clicker: { level: 0, price: 100 }
+            },
+            activeBoosts: {}
+        };
+
+        // Элементы интерфейса
+        const coinsDisplay = document.getElementById('coins');
+        const powerDisplay = document.getElementById('power');
+        const energyDisplay = document.getElementById('energy');
+        const playerRankDisplay = document.getElementById('player_rank');
+        const clickButton = document.getElementById('clickButton');
+
+        // Инициализация
+        function init() {
+            loadGame();
+            updateDisplay();
+            
+            // Обработчик клика
+            clickButton.addEventListener('click', clickCoin);
+            
+            // Автоматические процессы
+            setInterval(updateEnergy, 1000);
+            setInterval(autoClick, 10000);
+        }
+
+        function updateDisplay() {
+            coinsDisplay.textContent = gameData.coins.toLocaleString() + ' NazCoin';
+            powerDisplay.textContent = gameData.clickPower;
+            energyDisplay.textContent = Math.floor(gameData.energy) + '/' + gameData.maxEnergy;
+            playerRankDisplay.textContent = gameData.coins.toLocaleString() + ' 🪙';
+            
+            // Обновляем цены улучшений
+            for (const upgrade in gameData.upgrades) {
+                const priceElement = document.getElementById(upgrade + '_price');
+                if (priceElement) {
+                    priceElement.textContent = gameData.upgrades[upgrade].price + ' 🪙';
+                }
+            }
+        }
+
+        function clickCoin() {
+            if (gameData.energy >= 1) {
+                // Вычисляем бонусы
+                let multiplier = 1;
+                if (gameData.activeBoosts.double_coin) {
+                    multiplier = 2;
+                }
+                
+                let bonusPower = 0;
+                if (gameData.activeBoosts.mega_click) {
+                    bonusPower = 10;
+                }
+                
+                // Начисляем монеты
+                const coinsEarned = (gameData.clickPower + bonusPower) * multiplier;
+                gameData.coins += coinsEarned;
+                
+                // Расходуем энергию (если нет бесконечной энергии)
+                if (!gameData.activeBoosts.unlimited_energy) {
+                    gameData.energy -= 1;
+                }
+                
+                // Анимация клика
+                clickButton.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    clickButton.style.transform = 'scale(1)';
+                }, 100);
+                
+                // Создаем летающую монету
+                createFlyingCoin(coinsEarned);
+                
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        function createFlyingCoin(amount) {
+            const flyingCoin = document.createElement('div');
+            flyingCoin.className = 'flying-coin';
+            flyingCoin.textContent = '+' + amount + ' 🪙';
+            
+            // Позиционируем относительно кнопки клика
+            const rect = clickButton.getBoundingClientRect();
+            flyingCoin.style.left = (rect.left + rect.width / 2) + 'px';
+            flyingCoin.style.top = (rect.top + rect.height / 2) + 'px';
+            
+            document.body.appendChild(flyingCoin);
+            
+            // Анимация полета
+            let opacity = 1;
+            let top = rect.top;
+            const animation = setInterval(() => {
+                opacity -= 0.02;
+                top -= 2;
+                flyingCoin.style.opacity = opacity;
+                flyingCoin.style.top = top + 'px';
+                
+                if (opacity <= 0) {
+                    clearInterval(animation);
+                    document.body.removeChild(flyingCoin);
+                }
+            }, 16);
+        }
+
+        function buyUpgrade(upgradeType) {
+            const upgrade = gameData.upgrades[upgradeType];
+            
+            if (gameData.coins >= upgrade.price) {
+                gameData.coins -= upgrade.price;
+                upgrade.level++;
+                
+                // Применяем улучшение
+                switch (upgradeType) {
+                    case 'click_power':
+                        gameData.clickPower += 1;
+                        break;
+                    case 'energy_capacity':
+                        gameData.maxEnergy += 10;
+                        break;
+                    case 'energy_regen':
+                        gameData.energyRegen += 0.5;
+                        break;
+                }
+                
+                // Увеличиваем цену
+                upgrade.price = Math.floor(upgrade.price * 1.5);
+                
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        function buyBoost(boostType) {
+            const boostPrices = {
+                'double_coin': 50,
+                'unlimited_energy': 80,
+                'mega_click': 120
+            };
+            
+            const price = boostPrices[boostType];
+            
+            if (gameData.coins >= price) {
+                gameData.coins -= price;
+                
+                // Активируем буст
+                gameData.activeBoosts[boostType] = true;
+                
+                // Устанавливаем таймер отключения буста
+                const durations = {
+                    'double_coin': 30000,
+                    'unlimited_energy': 15000,
+                    'mega_click': 25000
+                };
+                
+                setTimeout(() => {
+                    delete gameData.activeBoosts[boostType];
+                    updateDisplay();
+                }, durations[boostType]);
+                
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        function openTab(tabName) {
+            // Скрываем все вкладки
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add('hidden');
+            }
+            
+            // Убираем активный класс со всех кнопок
+            const tabButtons = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            // Показываем выбранную вкладку
+            document.getElementById(tabName).classList.remove('hidden');
+            
+            // Активируем кнопку
+            event.target.classList.add('active');
+        }
+
+        function updateEnergy() {
+            if (gameData.energy < gameData.maxEnergy) {
+                gameData.energy = Math.min(gameData.maxEnergy, gameData.energy + gameData.energyRegen);
+                updateDisplay();
+            }
+        }
+
+        function autoClick() {
+            if (gameData.upgrades.auto_clicker.level > 0 && gameData.energy > 0) {
+                const autoClicks = gameData.upgrades.auto_clicker.level;
+                for (let i = 0; i < autoClicks; i++) {
+                    if (gameData.energy > 0) {
+                        gameData.coins += gameData.clickPower;
+                        if (!gameData.activeBoosts.unlimited_energy) {
+                            gameData.energy -= 1;
+                        }
+                    }
+                }
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('nazcoinClicker', JSON.stringify(gameData));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('nazcoinClicker');
+            if (saved) {
+                gameData = JSON.parse(saved);
+            }
+        }
+
+        // Запускаем игру при загрузке
+        window.addEventListener('load', init);
+    </script>
+</body>
+              </html>
