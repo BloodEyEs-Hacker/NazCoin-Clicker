@@ -486,9 +486,6 @@
     </div>
 
     <script>
-        // КОНФИГУРАЦИЯ
-        const SHEET_ID = '1FTTdyr-duz4qWLqXl2vTJJbLWJsj55l20gCbwbQ6ssU';
-
         // Игровые данные
         let gameData = {
             coins: 0,
@@ -537,9 +534,9 @@
             }
         }
 
-        // ==================== GOOGLE SHEETS API ====================
+        // ==================== ОБЩИЙ ТОП ====================
 
-        // Функция для отправки данных в Google Sheets
+        // Функция для отправки данных
         async function submitScore() {
             if (!gameData.playerName) {
                 alert('Сначала введите имя!');
@@ -555,20 +552,40 @@
             try {
                 leaderboardList.innerHTML = '<div class="loading">📤 Отправка счета...</div>';
                 
-                // Создаем уникальный ID игрока
-                const playerId = generatePlayerId();
+                // Получаем текущий топ
+                let leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
                 
-                // Подготовка данных для отправки
-                const scoreData = {
-                    playerId: playerId,
-                    playerName: gameData.playerName,
-                    coins: gameData.coins,
-                    clickPower: gameData.clickPower,
-                    timestamp: new Date().toISOString()
-                };
-
-                // Временное решение - сохраняем в localStorage
-                await saveToLocalLeaderboard(scoreData);
+                // Проверяем есть ли уже игрок в топе
+                const existingPlayerIndex = leaderboard.findIndex(p => p.playerName === gameData.playerName);
+                
+                if (existingPlayerIndex !== -1) {
+                    // Обновляем счет если он больше
+                    if (gameData.coins > leaderboard[existingPlayerIndex].coins) {
+                        leaderboard[existingPlayerIndex] = {
+                            playerName: gameData.playerName,
+                            coins: gameData.coins,
+                            clickPower: gameData.clickPower,
+                            timestamp: new Date().toISOString()
+                        };
+                    }
+                } else {
+                    // Добавляем нового игрока
+                    leaderboard.push({
+                        playerName: gameData.playerName,
+                        coins: gameData.coins,
+                        clickPower: gameData.clickPower,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                // Сортируем по убыванию монет
+                leaderboard.sort((a, b) => b.coins - a.coins);
+                
+                // Ограничиваем топ 15 игроками
+                leaderboard = leaderboard.slice(0, 15);
+                
+                // Сохраняем обновленный топ
+                localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard));
                 
                 gameData.lastScoreSubmit = Date.now();
                 saveGame();
@@ -582,46 +599,15 @@
             }
         }
 
-        // Сохранение в локальный leaderboard (временное решение)
-        async function saveToLocalLeaderboard(scoreData) {
-            return new Promise((resolve) => {
-                // Получаем текущий топ из localStorage
-                let leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
-                
-                // Проверяем есть ли уже игрок в топе
-                const existingPlayerIndex = leaderboard.findIndex(p => p.playerId === scoreData.playerId);
-                
-                if (existingPlayerIndex !== -1) {
-                    // Обновляем счет если он больше
-                    if (scoreData.coins > leaderboard[existingPlayerIndex].coins) {
-                        leaderboard[existingPlayerIndex] = scoreData;
-                    }
-                } else {
-                    // Добавляем нового игрока
-                    leaderboard.push(scoreData);
-                }
-                
-                // Сортируем по убыванию монет
-                leaderboard.sort((a, b) => b.coins - a.coins);
-                
-                // Ограничиваем топ 15 игроками
-                leaderboard = leaderboard.slice(0, 15);
-                
-                // Сохраняем обратно
-                localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard));
-                resolve();
-            });
-        }
-
         // Функция для получения топа
         async function updateLeaderboard() {
             try {
                 leaderboardList.innerHTML = '<div class="loading">🔄 Загрузка топа...</div>';
                 
-                // Имитируем загрузку
+                // Даем небольшую задержку для реализма
                 setTimeout(() => {
                     loadGlobalLeaderboard();
-                }, 1000);
+                }, 500);
                 
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
@@ -632,25 +618,7 @@
         // Загрузка глобального топа
         function loadGlobalLeaderboard() {
             const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
-            
-            if (leaderboard.length === 0) {
-                // Показываем демо-топ если нет данных
-                displayDemoLeaderboard();
-            } else {
-                updateLeaderboardDisplay(leaderboard);
-            }
-        }
-
-        // Демо-топ для первых пользователей
-        function displayDemoLeaderboard() {
-            const demoLeaderboard = [
-                { playerName: 'NazMaster', coins: 12500000, clickPower: 250 },
-                { playerName: 'CoinKing', coins: 9800000, clickPower: 180 },
-                { playerName: 'ClickPro', coins: 7500000, clickPower: 150 },
-                { playerName: 'TurboClick', coins: 5200000, clickPower: 120 },
-                { playerName: 'MoneyMaker', coins: 3100000, clickPower: 95 }
-            ];
-            updateLeaderboardDisplay(demoLeaderboard);
+            updateLeaderboardDisplay(leaderboard);
         }
 
         function updateLeaderboardDisplay(leaderboard) {
@@ -688,10 +656,6 @@
             if (gameData.playerName && gameData.coins > 1000) {
                 submitScore();
             }
-        }
-
-        function generatePlayerId() {
-            return gameData.playerName + '_' + Date.now();
         }
 
         // ==================== ИГРОВАЯ ЛОГИКА ====================
