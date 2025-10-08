@@ -12,8 +12,8 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #ffffff;
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -31,16 +31,25 @@
         .header h1 {
             font-size: 2em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
         .coins-display {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
             border-radius: 15px;
             padding: 15px;
             margin: 15px 0;
             font-size: 1.8em;
             font-weight: bold;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,215,0,0.3);
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .coins-display:hover {
+            box-shadow: 0 0 30px rgba(255,215,0,0.4);
+            transform: translateY(-2px);
         }
         .click-area {
             background: linear-gradient(45deg, #FFD700, #FFA500);
@@ -53,17 +62,41 @@
             justify-content: center;
             cursor: pointer;
             border: 5px solid #FF8C00;
-            box-shadow: 0 10px 30px rgba(255,165,0,0.4);
+            box-shadow: 
+                0 10px 30px rgba(255,165,0,0.4),
+                0 0 50px rgba(255,215,0,0.3);
             transition: all 0.1s;
             user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .click-area::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.3s;
+        }
+        .click-area:hover::before {
+            transform: rotate(45deg) translate(50%, 50%);
         }
         .click-area:active {
             transform: scale(0.95);
-            box-shadow: 0 5px 15px rgba(255,165,0,0.6);
+            box-shadow: 
+                0 5px 15px rgba(255,165,0,0.6),
+                0 0 30px rgba(255,215,0,0.4);
         }
-        .click-area .icon {
-            font-size: 4em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        .click-area img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FF8C00;
+            box-shadow: 0 0 20px rgba(255,165,0,0.5);
         }
         .stats {
             display: grid;
@@ -72,15 +105,21 @@
             margin: 20px 0;
         }
         .stat {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
             padding: 15px;
             border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,215,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.2);
         }
         .stat-value {
             font-size: 1.3em;
             font-weight: bold;
             margin-top: 5px;
+            color: #FFD700;
         }
         .buttons {
             display: grid;
@@ -89,46 +128,103 @@
             margin: 20px 0;
         }
         .btn {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
             border: none;
             padding: 12px;
             border-radius: 10px;
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,215,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
         }
         .btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
         }
         .upgrade-item {
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
             text-align: left;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,215,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .upgrade-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent);
+            transition: width 0.3s;
+        }
+        .upgrade-item:hover::before {
+            width: 100%;
+        }
+        .upgrade-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.2);
         }
         .upgrade-price {
             float: right;
             font-weight: bold;
             color: #FFD700;
+            font-size: 1.1em;
+        }
+        .upgrade-level {
+            color: #888;
+            font-size: 0.9em;
         }
         .boost-item {
-            background: rgba(255,215,0,0.2);
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
+            background: rgba(255,215,0,0.1);
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
             border: 1px solid #FFD700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .boost-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(255,215,0,0.3);
         }
         .hidden {
             display: none;
+            opacity: 0;
+            transform: translateY(20px);
         }
         .tab-content {
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             margin: 10px 0;
+            transition: all 0.5s ease;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
         .tab-buttons {
             display: grid;
@@ -137,24 +233,137 @@
             margin: 10px 0;
         }
         .tab-btn {
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             color: white;
             cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,215,0,0.2);
         }
         .tab-btn.active {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,215,0,0.2);
+            box-shadow: 0 0 15px rgba(255,215,0,0.3);
+            transform: translateY(-2px);
+        }
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.1);
         }
         .flying-coin {
             position: fixed;
             color: #FFD700;
             font-weight: bold;
             font-size: 1.2em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 0 10px rgba(255,215,0,0.8);
             pointer-events: none;
             z-index: 1000;
+            animation: flyUp 1s ease-out forwards;
+        }
+        @keyframes flyUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .leaderboard-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(255,215,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.08);
+        }
+        .player-name {
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+            max-width: 300px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            background: #2a2a2a;
+            color: white;
+            text-align: center;
+        }
+        .modal button {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .energy-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFD700;
+            border-radius: 4px;
+        }
+        .last-updated {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -166,7 +375,7 @@
         </div>
 
         <div class="click-area" id="clickButton">
-            <div class="icon">👆</div>
+            <img src="https://i.imgur.com/4nr6WcT.jpeg" alt="Click to earn NazCoin">
         </div>
 
         <div class="stats">
@@ -177,6 +386,9 @@
             <div class="stat">
                 <div>⚡ Энергия</div>
                 <div class="stat-value" id="energy">100/100</div>
+                <div class="energy-bar">
+                    <div class="energy-fill" id="energyFill" style="width: 100%;"></div>
+                </div>
             </div>
         </div>
 
@@ -186,48 +398,63 @@
             <button class="tab-btn" onclick="openTab('leaderboard')">🏆 Топ</button>
         </div>
 
-        <div id="shop" class="tab-content">
+        <div id="shop" class="tab-content active">
             <div class="upgrade-item" onclick="buyUpgrade('click_power')">
-                💪 Сила клика <span class="upgrade-price" id="click_power_price">10 🪙</span>
-                <div style="font-size: 0.8em;">+1 к силе клика</div>
+                💪 Сила клика <span class="upgrade-price" id="click_power_price">1,000 🪙</span>
+                <div class="upgrade-level">Уровень: <span id="click_power_level">0</span></div>
+                <div style="font-size: 0.8em; color: #ccc;">+1 к силе клика</div>
             </div>
             <div class="upgrade-item" onclick="buyUpgrade('energy_capacity')">
-                🔋 Ёмкость энергии <span class="upgrade-price" id="energy_capacity_price">20 🪙</span>
-                <div style="font-size: 0.8em;">+10 к максимум энергии</div>
+                🔋 Ёмкость энергии <span class="upgrade-price" id="energy_capacity_price">2,500 🪙</span>
+                <div class="upgrade-level">Уровень: <span id="energy_capacity_level">0</span></div>
+                <div style="font-size: 0.8em; color: #ccc;">+25 к максимум энергии</div>
             </div>
             <div class="upgrade-item" onclick="buyUpgrade('energy_regen')">
-                🔄 Регенерация <span class="upgrade-price" id="energy_regen_price">30 🪙</span>
-                <div style="font-size: 0.8em;">+0.5 к восстановлению</div>
+                🔄 Регенерация <span class="upgrade-price" id="energy_regen_price">5,000 🪙</span>
+                <div class="upgrade-level">Уровень: <span id="energy_regen_level">0</span></div>
+                <div style="font-size: 0.8em; color: #ccc;">+1 к восстановлению</div>
             </div>
             <div class="upgrade-item" onclick="buyUpgrade('auto_clicker')">
-                🤖 Автокликер <span class="upgrade-price" id="auto_clicker_price">100 🪙</span>
-                <div style="font-size: 0.8em;">Автоматические клики</div>
+                🤖 Автокликер <span class="upgrade-price" id="auto_clicker_price">25,000 🪙</span>
+                <div class="upgrade-level">Уровень: <span id="auto_clicker_level">0</span></div>
+                <div style="font-size: 0.8em; color: #ccc;">Автоматические клики</div>
             </div>
         </div>
 
-        <div id="boosts" class="tab-content hidden">
+        <div id="boosts" class="tab-content">
             <div class="boost-item" onclick="buyBoost('double_coin')">
-                💰 Удвоение монет <span class="upgrade-price">50 🪙</span>
-                <div style="font-size: 0.8em;">x2 монет на 30 сек</div>
+                💰 Удвоение монет <span class="upgrade-price">10,000 🪙</span>
+                <div style="font-size: 0.8em; color: #ccc;">x2 монет на 30 сек</div>
             </div>
             <div class="boost-item" onclick="buyBoost('unlimited_energy')">
-                ⚡ Беск. энергия <span class="upgrade-price">80 🪙</span>
-                <div style="font-size: 0.8em;">Беск. энергия на 15 сек</div>
+                ⚡ Беск. энергия <span class="upgrade-price">15,000 🪙</span>
+                <div style="font-size: 0.8em; color: #ccc;">Беск. энергия на 15 сек</div>
             </div>
             <div class="boost-item" onclick="buyBoost('mega_click')">
-                🚀 Мега-клик <span class="upgrade-price">120 🪙</span>
-                <div style="font-size: 0.8em;">+10 силы на 25 сек</div>
+                🚀 Мега-клик <span class="upgrade-price">20,000 🪙</span>
+                <div style="font-size: 0.8em; color: #ccc;">+50 силы на 25 сек</div>
             </div>
         </div>
 
-        <div id="leaderboard" class="tab-content hidden">
-            <div style="text-align: left; margin: 10px 0;">
-                <div>🥇 NazMaster - 1,500,000 🪙</div>
-                <div>🥈 CoinKing - 1,200,000 🪙</div>
-                <div>🥉 ClickPro - 980,000 🪙</div>
-                <div>4. TurboClick - 750,000 🪙</div>
-                <div>5. MoneyMaker - 500,000 🪙</div>
-                <div style="margin-top: 10px; font-weight: bold;">Ты: <span id="player_rank">0 🪙</span></div>
+        <div id="leaderboard" class="tab-content">
+            <div style="margin-bottom: 10px;">
+                <button class="btn" onclick="showNameModal()">✏️ Ввести имя</button>
+            </div>
+            <div id="leaderboardList">
+                <!-- Топ будет загружен здесь -->
+            </div>
+            <div class="last-updated" id="lastUpdated">Обновлено: никогда</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для ввода имени -->
+    <div class="modal" id="nameModal">
+        <div class="modal-content">
+            <h3>Введите ваше имя</h3>
+            <input type="text" id="playerNameInput" maxlength="20" placeholder="Ваше имя">
+            <div>
+                <button onclick="savePlayerName()">Сохранить</button>
+                <button onclick="hideNameModal()">Отмена</button>
             </div>
         </div>
     </div>
@@ -241,45 +468,67 @@
             maxEnergy: 100,
             energyRegen: 1,
             upgrades: {
-                click_power: { level: 0, price: 10 },
-                energy_capacity: { level: 0, price: 20 },
-                energy_regen: { level: 0, price: 30 },
-                auto_clicker: { level: 0, price: 100 }
+                click_power: { level: 0, price: 1000 },
+                energy_capacity: { level: 0, price: 2500 },
+                energy_regen: { level: 0, price: 5000 },
+                auto_clicker: { level: 0, price: 25000 }
             },
-            activeBoosts: {}
+            activeBoosts: {},
+            playerName: '',
+            lastSave: Date.now()
         };
+
+        // Таблица лидеров
+        let leaderboard = [];
+        let lastLeaderboardUpdate = 0;
 
         // Элементы интерфейса
         const coinsDisplay = document.getElementById('coins');
         const powerDisplay = document.getElementById('power');
         const energyDisplay = document.getElementById('energy');
-        const playerRankDisplay = document.getElementById('player_rank');
+        const energyFill = document.getElementById('energyFill');
         const clickButton = document.getElementById('clickButton');
+        const leaderboardList = document.getElementById('leaderboardList');
+        const lastUpdated = document.getElementById('lastUpdated');
+        const nameModal = document.getElementById('nameModal');
+        const playerNameInput = document.getElementById('playerNameInput');
 
         // Инициализация
         function init() {
             loadGame();
             updateDisplay();
+            loadLeaderboard();
             
             // Обработчик клика
             clickButton.addEventListener('click', clickCoin);
             
             // Автоматические процессы
             setInterval(updateEnergy, 1000);
-            setInterval(autoClick, 10000);
+            setInterval(autoClick, 1000);
+            setInterval(saveGame, 30000); // Автосохранение каждые 30 сек
+            setInterval(loadLeaderboard, 300000); // Обновление топа каждые 5 минут
+            
+            // Запрашиваем имя если его нет
+            if (!gameData.playerName) {
+                setTimeout(showNameModal, 1000);
+            }
         }
 
         function updateDisplay() {
             coinsDisplay.textContent = gameData.coins.toLocaleString() + ' NazCoin';
             powerDisplay.textContent = gameData.clickPower;
             energyDisplay.textContent = Math.floor(gameData.energy) + '/' + gameData.maxEnergy;
-            playerRankDisplay.textContent = gameData.coins.toLocaleString() + ' 🪙';
+            energyFill.style.width = (gameData.energy / gameData.maxEnergy * 100) + '%';
             
-            // Обновляем цены улучшений
+            // Обновляем цены и уровни улучшений
             for (const upgrade in gameData.upgrades) {
                 const priceElement = document.getElementById(upgrade + '_price');
+                const levelElement = document.getElementById(upgrade + '_level');
                 if (priceElement) {
-                    priceElement.textContent = gameData.upgrades[upgrade].price + ' 🪙';
+                    priceElement.textContent = gameData.upgrades[upgrade].price.toLocaleString() + ' 🪙';
+                }
+                if (levelElement) {
+                    levelElement.textContent = gameData.upgrades[upgrade].level;
                 }
             }
         }
@@ -294,7 +543,7 @@
                 
                 let bonusPower = 0;
                 if (gameData.activeBoosts.mega_click) {
-                    bonusPower = 10;
+                    bonusPower = 50;
                 }
                 
                 // Начисляем монеты
@@ -307,10 +556,8 @@
                 }
                 
                 // Анимация клика
-                clickButton.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    clickButton.style.transform = 'scale(1)';
-                }, 100);
+                clickButton.classList.add('pulse');
+                setTimeout(() => clickButton.classList.remove('pulse'), 500);
                 
                 // Создаем летающую монету
                 createFlyingCoin(coinsEarned);
@@ -323,29 +570,17 @@
         function createFlyingCoin(amount) {
             const flyingCoin = document.createElement('div');
             flyingCoin.className = 'flying-coin';
-            flyingCoin.textContent = '+' + amount + ' 🪙';
+            flyingCoin.textContent = '+' + amount.toLocaleString() + ' 🪙';
             
-            // Позиционируем относительно кнопки клика
             const rect = clickButton.getBoundingClientRect();
             flyingCoin.style.left = (rect.left + rect.width / 2) + 'px';
             flyingCoin.style.top = (rect.top + rect.height / 2) + 'px';
             
             document.body.appendChild(flyingCoin);
             
-            // Анимация полета
-            let opacity = 1;
-            let top = rect.top;
-            const animation = setInterval(() => {
-                opacity -= 0.02;
-                top -= 2;
-                flyingCoin.style.opacity = opacity;
-                flyingCoin.style.top = top + 'px';
-                
-                if (opacity <= 0) {
-                    clearInterval(animation);
-                    document.body.removeChild(flyingCoin);
-                }
-            }, 16);
+            setTimeout(() => {
+                document.body.removeChild(flyingCoin);
+            }, 1000);
         }
 
         function buyUpgrade(upgradeType) {
@@ -361,15 +596,19 @@
                         gameData.clickPower += 1;
                         break;
                     case 'energy_capacity':
-                        gameData.maxEnergy += 10;
+                        gameData.maxEnergy += 25;
                         break;
                     case 'energy_regen':
-                        gameData.energyRegen += 0.5;
+                        gameData.energyRegen += 1;
                         break;
                 }
                 
-                // Увеличиваем цену
-                upgrade.price = Math.floor(upgrade.price * 1.5);
+                // Увеличиваем цену (сильно!)
+                upgrade.price = Math.floor(upgrade.price * 2.5);
+                
+                // Анимация покупки
+                coinsDisplay.classList.add('pulse');
+                setTimeout(() => coinsDisplay.classList.remove('pulse'), 500);
                 
                 updateDisplay();
                 saveGame();
@@ -378,9 +617,9 @@
 
         function buyBoost(boostType) {
             const boostPrices = {
-                'double_coin': 50,
-                'unlimited_energy': 80,
-                'mega_click': 120
+                'double_coin': 10000,
+                'unlimited_energy': 15000,
+                'mega_click': 20000
             };
             
             const price = boostPrices[boostType];
@@ -412,7 +651,7 @@
             // Скрываем все вкладки
             const tabContents = document.getElementsByClassName('tab-content');
             for (let i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.add('hidden');
+                tabContents[i].classList.remove('active');
             }
             
             // Убираем активный класс со всех кнопок
@@ -422,10 +661,15 @@
             }
             
             // Показываем выбранную вкладку
-            document.getElementById(tabName).classList.remove('hidden');
+            document.getElementById(tabName).classList.add('active');
             
             // Активируем кнопку
             event.target.classList.add('active');
+            
+            // Если открыли топ, обновляем его
+            if (tabName === 'leaderboard') {
+                loadLeaderboard();
+            }
         }
 
         function updateEnergy() {
@@ -451,14 +695,114 @@
             }
         }
 
+        // Таблица лидеров
+        async function loadLeaderboard() {
+            const now = Date.now();
+            if (now - lastLeaderboardUpdate < 300000) { // 5 минут
+                return;
+            }
+            
+            lastLeaderboardUpdate = now;
+            
+            try {
+                // Используем localStorage как простую базу данных
+                const savedLeaderboard = localStorage.getItem('nazcoinLeaderboard');
+                if (savedLeaderboard) {
+                    leaderboard = JSON.parse(savedLeaderboard);
+                }
+                
+                // Добавляем текущего игрока если есть имя
+                if (gameData.playerName && gameData.coins > 0) {
+                    const playerIndex = leaderboard.findIndex(p => p.name === gameData.playerName);
+                    if (playerIndex !== -1) {
+                        leaderboard[playerIndex].coins = Math.max(leaderboard[playerIndex].coins, gameData.coins);
+                    } else {
+                        leaderboard.push({
+                            name: gameData.playerName,
+                            coins: gameData.coins
+                        });
+                    }
+                    
+                    // Сортируем по убыванию монет
+                    leaderboard.sort((a, b) => b.coins - a.coins);
+                    
+                    // Ограничиваем топ 10 игроками
+                    leaderboard = leaderboard.slice(0, 10);
+                    
+                    // Сохраняем обновленный топ
+                    localStorage.setItem('nazcoinLeaderboard', JSON.stringify(leaderboard));
+                }
+                
+                updateLeaderboardDisplay();
+                
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+            }
+        }
+
+        function updateLeaderboardDisplay() {
+            if (!leaderboardList) return;
+            
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Таблица лидеров пуста</div>';
+            } else {
+                let html = '';
+                const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+                
+                leaderboard.forEach((player, index) => {
+                    const medal = index < medals.length ? medals[index] : `${index + 1}.`;
+                    const isCurrentPlayer = player.name === gameData.playerName;
+                    const playerClass = isCurrentPlayer ? 'style="background: rgba(255,215,0,0.2); border-color: #FFD700;"' : '';
+                    
+                    html += `
+                        <div class="leaderboard-item" ${playerClass}>
+                            <span class="player-name">${medal} ${player.name}</span>
+                            <span style="float: right; font-weight: bold;">${player.coins.toLocaleString()} 🪙</span>
+                        </div>
+                    `;
+                });
+                
+                leaderboardList.innerHTML = html;
+            }
+            
+            lastUpdated.textContent = `Обновлено: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function showNameModal() {
+            if (playerNameInput) {
+                playerNameInput.value = gameData.playerName || '';
+            }
+            nameModal.style.display = 'flex';
+        }
+
+        function hideNameModal() {
+            nameModal.style.display = 'none';
+        }
+
+        function savePlayerName() {
+            const name = playerNameInput.value.trim();
+            if (name) {
+                gameData.playerName = name;
+                hideNameModal();
+                saveGame();
+                loadLeaderboard(); // Обновляем топ с новым именем
+            }
+        }
+
         function saveGame() {
+            gameData.lastSave = Date.now();
             localStorage.setItem('nazcoinClicker', JSON.stringify(gameData));
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('nazcoinClicker');
-            if (saved) {
-                gameData = JSON.parse(saved);
+            try {
+                const saved = localStorage.getItem('nazcoinClicker');
+                if (saved) {
+                    const loadedData = JSON.parse(saved);
+                    gameData = { ...gameData, ...loadedData };
+                }
+            } catch (error) {
+                console.error('Error loading game:', error);
             }
         }
 
@@ -466,4 +810,4 @@
         window.addEventListener('load', init);
     </script>
 </body>
-              </html>
+</html>
