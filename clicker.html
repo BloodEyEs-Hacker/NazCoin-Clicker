@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NazCoin Clicker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=Onest:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--g:#ffc83d;--bg:#140a2b;--tx:#fff4e6;--mu:#b5a8d4;--pk:#ff5fa2;--cd:rgba(255,255,255,.07);--ln:rgba(255,255,255,.13);--gl:color-mix(in srgb,var(--g) 45%,transparent);--f:'Onest',system-ui,sans-serif;--d:'Unbounded','Onest',system-ui,sans-serif}
+html{background:var(--bg)}
+body{font:400 15px/1.45 var(--f);color:var(--tx);min-height:100vh;background:radial-gradient(900px 500px at 10% -10%,#5b21b655,transparent),radial-gradient(700px 500px at 100% 0,#ff5fa233,transparent),var(--bg);overflow-x:hidden;transition:filter 2s}
+body.gov{filter:sepia(1) hue-rotate(40deg) saturate(2)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+h1,h2,h3{font-family:var(--d);font-weight:800;line-height:1.15}
+[hidden]{display:none!important}
+.app{max-width:520px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px 48px;opacity:0;transform:translateY(14px);transition:opacity .8s,transform .8s}
+.app.on{opacity:1;transform:none}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.chip{display:flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border-radius:99px;background:var(--cd);border:1px solid var(--ln);font-weight:600}
+.chip b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--g);color:#2a1750;font-family:var(--d)}
+.ic{width:42px;height:42px;border-radius:50%;background:var(--cd);border:1px solid var(--ln);font-size:18px;transition:transform .4s,border-color .2s}
+.ic:hover{transform:rotate(90deg);border-color:var(--g)}
+.bn{margin-bottom:14px;padding:10px 14px;border-radius:16px;text-align:center;font-family:var(--d);font-weight:800;font-size:13px;color:#2a1750;background:linear-gradient(100deg,#ffc83d,#ff8fc0,#ffc83d,#ff8fc0);background-size:300% 100%;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:300% 0}}
+.hero{text-align:center}
+.hero h1{font-size:clamp(24px,7.5vw,32px);cursor:pointer;user-select:none}
+#coins{font:800 clamp(30px,10vw,42px)/1.1 var(--d);margin:10px 0 18px;text-shadow:0 0 28px var(--gl);font-variant-numeric:tabular-nums}
+#coins small{display:block;font:600 13px var(--f);color:var(--mu);margin-top:4px;text-shadow:none}
+.ring{width:min(310px,74vw);aspect-ratio:1;margin:0 auto 20px;padding:7px;border-radius:50%;background:conic-gradient(var(--g) calc(var(--e,100)*1%),rgba(255,255,255,.1) 0);box-shadow:0 0 50px var(--gl)}
+.coin{display:block;width:100%;aspect-ratio:1;border-radius:50%;border:3px solid var(--bg);padding:0;overflow:hidden;transition:transform .12s;animation:br 3.2s ease-in-out infinite}
+.coin:active{transform:scale(.93);animation:none}
+.coin img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.coin.dead{filter:grayscale(.8);animation:none}
+@keyframes br{50%{transform:scale(1.025)}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.st{padding:12px 14px;border-radius:16px;background:var(--cd);border:1px solid var(--ln)}
+.st small{color:var(--mu);display:block}.st b{font:800 18px var(--d)}
+.bar{height:6px;border-radius:9px;background:rgba(255,255,255,.12);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:100%;border-radius:9px;background:linear-gradient(90deg,var(--g),var(--pk));transition:width .4s}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;border-radius:18px;background:var(--cd);border:1px solid var(--ln);margin-bottom:14px}
+.tabs button{display:grid;justify-items:center;gap:2px;padding:8px 2px;border-radius:14px;font-weight:600;font-size:11px;color:var(--mu);transition:.25s}
+.tabs button.on{background:var(--g);color:#2a1750}
+.panel{display:grid;gap:10px;animation:pin .35s}
+@keyframes pin{from{opacity:0;transform:translateY(8px)}}
+.card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;width:100%;padding:14px;border-radius:18px;background:var(--cd);border:1px solid var(--ln);text-align:left;transition:.2s}
+.card i{font-size:26px;font-style:normal}.card b{display:block}.card small{color:var(--mu)}
+.card.no{opacity:.5}.card:not(.no):hover{border-color:var(--g);transform:translateY(-2px)}.card.act{border-color:var(--pk);background:rgba(255,95,162,.14)}
+.pr{font-weight:600;color:var(--g);white-space:nowrap}
+.ev{padding:16px;border-radius:20px;background:var(--cd);border:1px solid var(--ln);display:grid;gap:10px}
+.ev.bd{background:linear-gradient(150deg,rgba(255,200,61,.2),rgba(255,95,162,.2));border-color:var(--g)}
+.ev h3{font-size:16px}.ev p{color:var(--mu)}.ev img{width:100%;max-height:160px;object-fit:cover;border-radius:12px}
+.tag{justify-self:start;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(255,255,255,.12)}
+.tag.live{background:#35d07f;color:#06301a}.tag.wait{background:var(--g);color:#2a1750}
+.cake{font-size:54px;text-align:center;animation:br 2s ease-in-out infinite}
+.btn{padding:12px 16px;border-radius:14px;background:var(--g);color:#2a1750;font-weight:600;transition:.2s}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px var(--gl)}.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:var(--cd);color:var(--tx);border:1px solid var(--ln)}.btn.red{background:#e5484d;color:#fff}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.lb{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--cd);border:1px solid var(--ln)}
+.lb.me{border-color:var(--g);background:color-mix(in srgb,var(--g) 16%,transparent)}.lb em{font-style:normal;width:30px;text-align:center}.lb div{flex:1;min-width:0}.lb b{display:block;overflow:hidden;text-overflow:ellipsis}.lb small{color:var(--mu)}
+.muted{color:var(--mu);text-align:center;font-size:13px}
+.modal{position:fixed;inset:0;z-index:50;display:none;place-items:center;padding:16px;background:rgba(10,4,24,.82);backdrop-filter:blur(8px)}
+.modal.on{display:grid}
+.box{width:100%;max-width:400px;max-height:88vh;overflow:auto;padding:22px;border-radius:24px;background:#1f1240;border:1px solid var(--ln);display:grid;gap:12px;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.9)}}
+.box h2{font-size:20px}
+input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--ln);background:rgba(255,255,255,.07);color:var(--tx);font:inherit}
+.sw{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.sw button{aspect-ratio:1;border-radius:50%;border:3px solid transparent}.sw button.on{border-color:#fff;transform:scale(1.12)}
+.msg{min-height:20px;font-size:13px;color:#ff8a8a}.msg.ok{color:#5be39a}
+.info{display:flex;justify-content:space-between;color:var(--mu);font-size:13px}.info b{color:var(--tx)}
+.load{position:fixed;inset:0;z-index:90;display:grid;place-content:center;justify-items:center;gap:18px;background:var(--bg);transition:opacity .6s}
+.load .coin{width:130px;margin:0;border:4px solid var(--g);animation:spin 1.4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load .bar{width:200px}.load .bar i{width:0}
+.fly{position:fixed;z-index:40;pointer-events:none;font:800 20px var(--d);color:var(--g);text-shadow:0 2px 12px #000;animation:fly 1s forwards;transform:translateX(-50%)}
+@keyframes fly{to{transform:translate(-50%,-110px);opacity:0}}
+.balloon{position:fixed;bottom:-130px;z-index:1;width:46px;height:58px;border-radius:50% 50% 48% 48%;pointer-events:none;opacity:.85;animation:rise linear infinite}
+.balloon:after{content:"";position:absolute;left:50%;top:100%;width:1px;height:50px;background:rgba(255,255,255,.4)}
+@keyframes rise{to{transform:translateY(-125vh) rotate(8deg)}}
+#cf{position:fixed;inset:0;z-index:60;pointer-events:none}
+.scream{position:fixed;inset:0;z-index:99;display:none;place-content:center;justify-items:center;gap:16px;background:#000}
+.scream.on{display:grid}.scream img{max-width:90vw;max-height:70vh;animation:sh .1s infinite}.scream b{font:800 40px var(--d);color:#f33}
+@keyframes sh{25%{transform:translate(6px,-4px)}75%{transform:translate(-6px,4px)}}
+.toast{position:fixed;left:50%;bottom:24px;z-index:80;transform:translateX(-50%);padding:11px 18px;border-radius:14px;background:#fff;color:#2a1750;font-weight:600;animation:pin .3s}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}.balloon{display:none}}
+.tabs button span{font-size:18px}.reel{font-size:72px;line-height:1;margin:8px 0}
+</style>
+</head>
+<body>
+<canvas id="cf"></canvas>
+<div class="load" id="load"><button class="coin" tabindex="-1"><img src="https://i.ibb.co/9HmZMTBX/images.jpg" alt=""></button><h2>NazCoin</h2><div class="bar"><i id="lp"></i></div></div>
+<div class="scream" id="scream"><img src="https://i.ibb.co/kg7kYFZL/images.jpg" alt=""><b>БУУУУУУ!</b></div>
+
+<main class="app" id="app">
+  <div class="top"><div class="chip"><b id="av">?</b><span id="who"></span></div><button class="ic" id="setBtn" aria-label="Настройки">⚙️</button></div>
+  <div class="bn" id="bn" hidden>🎂 С Днём Рождения, Назар! Во время ивента все клики дают +50% 🎉</div>
+  <div class="hero">
+    <h1 id="ttl">🪙 NazCoin Clicker</h1>
+    <div id="coins">0<small>NazCoin</small></div>
+    <div class="ring" id="ring"><button class="coin" id="coin" aria-label="Кликнуть"><img src="https://i.ibb.co/9HmZMTBX/images.jpg" alt="NazCoin"></button></div>
+  </div>
+  <div class="stats">
+    <div class="st"><small id="l1">💪 Сила клика</small><b id="pw">1</b></div>
+    <div class="st"><small id="l2">⚡ Энергия</small><b id="en">100/100</b><div class="bar"><i id="ef"></i></div></div>
+  </div>
+  <div class="tabs" id="tabs"><button class="on" data-t="shop"></button><button data-t="boosts"></button><button data-t="cases"></button><button data-t="events"></button><button data-t="top"></button></div>
+  <section class="panel" id="shop"></section>
+  <section class="panel" id="boosts" hidden></section>
+  <section class="panel" id="cases" hidden></section>
+  <section class="panel" id="events" hidden></section>
+  <section class="panel" id="top" hidden>
+    <div class="row"><button class="btn ghost" id="lbR">🔄 Обновить</button><button class="btn" id="lbS">☁️ Сохранить</button></div>
+    <div id="lbL" class="panel"></div><div class="muted" id="lbT"></div>
+  </section>
+</main>
+
+<div class="modal" id="authM"><form class="box" id="authF" autocomplete="on">
+  <h2>🪙 NazCoin</h2>
+  <div class="row"><button type="button" class="btn" id="mLogin">Вход</button><button type="button" class="btn ghost" id="mReg">Регистрация</button></div>
+  <input id="al" placeholder="Логин" autocomplete="username" maxlength="16" required>
+  <input id="ap" type="password" placeholder="Пароль" autocomplete="current-password" required>
+  <div class="msg" id="am"></div>
+  <button class="btn" id="aGo">Войти</button>
+  <div class="muted">Аккаунт и прогресс хранятся в облаке — заходи с любого устройства. Логин станет именем в топе.</div>
+</form></div>
+
+<div class="modal" id="caseM"><div class="box" id="caseB" style="text-align:center"></div></div>
+<div class="modal" id="setM"><div class="box">
+  <div class="tabs" style="grid-template-columns:repeat(3,1fr);margin:0" id="sTabs"><button class="on" data-s="s1">🎨 Вид</button><button data-s="s2">🎫 Промо</button><button data-s="s3">👤 Профиль</button></div>
+  <div id="s1" class="panel"><h2>Цвет свечения</h2><div class="sw" id="sw"></div></div>
+  <div id="s2" class="panel" hidden><h2>Промокоды</h2><input id="pi" placeholder="Введите промокод" maxlength="20"><button class="btn" id="pb">Активировать</button><div class="msg" id="pm"></div><div class="muted">Стартовые: NAZAR10000, NAZARBONUS. Каждый работает 1 раз.</div></div>
+  <div id="s3" class="panel" hidden>
+    <h2>Профиль</h2>
+    <div class="info">Всего заработано<b id="i1"></b></div><div class="info">Всего кликов<b id="i2"></b></div><div class="info">Время игры<b id="i3"></b></div>
+    <div class="info">Версия<b>4.0</b></div><div class="info">Разработчики<b>Кирюха Лайк, Назарик Подписка</b></div><div class="info">Тестер<b>Янка Колокольчик</b></div>
+    <button class="btn ghost" id="out">Выйти из аккаунта</button><button class="btn red" id="rst">🗑️ Сбросить прогресс</button>
+    <div class="muted">Сброс удалит монеты и улучшения, аккаунт сохранится.</div>
+  </div>
+  <button class="btn ghost" id="setX">Закрыть</button>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const LS=(k,v)=>v===undefined?JSON.parse(localStorage.getItem(k)||'null'):localStorage.setItem(k,JSON.stringify(v));
+// ДР Назара — 21 октября. Ивент идёт бессрочно, пока его не уберут
+const BDAY_FROM=new Date('2026-10-21');
+const BIN='68e7e79fae596e708f0c265c',KEY='$2a$10$8Hm6IuCTYLcArmL9PTQ.aOS9XhTaSp9IkuCrdh726HNINMKUeANAa';
+const UP={click_power:{i:'💪',n:'Сила клика',g:'Сила говна',d:'+5 к силе клика',p:5e4},
+energy_capacity:{i:'🔋',n:'Ёмкость энергии',g:'Размер толчка',d:'+50 к максимуму энергии',p:1e5},
+energy_regen:{i:'🔄',n:'Регенерация',g:'Жидкость говна',d:'+5 к восстановлению',p:25e4},
+auto_clicker:{i:'🤖',n:'Автокликер',g:'Автосральник',d:'+1 автоклик в секунду',p:1e6}};
+const BO={double_coin:{i:'💰',n:'Удвоение монет',g:'Говняное море',d:'x2 монет на 60 сек',p:5e5,t:60},
+unlimited_energy:{i:'⚡',n:'Беск. энергия',g:'Беск. понос',d:'Энергия не тратится 30 сек',p:75e4,t:30},
+mega_click:{i:'🚀',n:'Мега-клик',g:'Супер понос',d:'+100 к силе на 45 сек',p:15e5,t:45}};
+const PROMO={NAZAR10000:1e4,NAZIK25000:25e3,NAZARPRO:5e4,SUPERNAZIK:75e3,NAZARBONUS:15e3,'NAZ-TOPWINNER':55e5,'NAZ-NAZIKANDFROGI':5e6,'NAZ-WINROBUX':45e5,'NAZ-ROBUXCART':4e6,'NAZ-WINPROMO':35e5,'NAZ-OLDDAYS':3e6,'NAZ-SASHA':25e6,'NAZ-BDAY':1e6};
+const COLORS=['#ffc83d','#ff4d6d','#35d07f','#4d8dff','#c26bff','#27d9e6'];
+const fresh=()=>({coins:0,power:1,energy:100,max:100,regen:1,lv:{click_power:0,energy_capacity:0,energy_regen:0,auto_clicker:0},boosts:{},daily:0,promos:[],st:{earned:0,clicks:0,time:0}});
+let U,NAME,SH,g=null,gov=false,touch=0,tc=0,tl=0,scr=0,reg=false,busy=0,cd=0;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
+const T=(a,b)=>gov?b:a;
+const price=k=>UP[k].p*3**g.lv[k];
+const on=k=>(g.boosts[k]||0)>Date.now();
+const bd=()=>Date.now()>=BDAY_FROM;
+
+const save=()=>{if(!U)return;if(touch){g.t=Date.now();touch=0;cd=1}LS('nz_d_'+U,g)};
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),2600)}
+async function hs(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('naz:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{let h=5381;for(const c of 'naz:'+s)h=h*33^c.charCodeAt(0);return'x'+(h>>>0)}}
+
+// ---------- конфетти и шарики ----------
+const cv=$('#cf'),cx=cv.getContext('2d');let P=[],run=0;
+const rs=()=>{cv.width=innerWidth;cv.height=innerHeight};rs();addEventListener('resize',rs);
+function conf(x,y,n=40){for(let i=0;i<n;i++)P.push({x,y,vx:(Math.random()-.5)*13,vy:-Math.random()*13-3,r:Math.random()*6+3,c:`hsl(${Math.random()*360} 90% 62%)`,a:Math.random()*6,l:100});if(!run){run=1;frame()}}
+function frame(){cx.clearRect(0,0,cv.width,cv.height);P=P.filter(p=>p.l>0);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.vx*=.99;p.a+=.2;p.l--;cx.save();cx.globalAlpha=Math.min(1,p.l/30);cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r,-p.r/2,p.r*2,p.r);cx.restore()});P.length?requestAnimationFrame(frame):run=0}
+function balloons(){if($('.balloon')||!bd())return;for(let i=0;i<9;i++){const b=document.createElement('div');b.className='balloon';b.style.cssText=`left:${5+i*11}%;background:hsl(${i*40} 85% 62%);animation-duration:${11+i%4*3}s;animation-delay:${-i*2.3}s`;document.body.append(b)}}
+
+// ---------- аккаунты (облако: тот же JSONBin) ----------
+const API=`https://api.jsonbin.io/v3/b/${BIN}`,HD={'X-Master-Key':KEY};
+const jget=async()=>{const r=await(await fetch(API+'/latest',{headers:HD})).json();if(!r.record)throw 0;return r.record};
+const jput=async rec=>{const r=await(await fetch(API,{method:'PUT',headers:{...HD,'Content-Type':'application/json'},body:JSON.stringify(rec)})).json();if(r.success===false)throw 0};
+function authMode(r){reg=r;$('#mLogin').className='btn'+(r?' ghost':'');$('#mReg').className='btn'+(r?'':' ghost');$('#aGo').textContent=r?'Создать аккаунт':'Войти';$('#ap').autocomplete=r?'new-password':'current-password';$('#am').textContent=''}
+$('#mLogin').onclick=()=>authMode(0);$('#mReg').onclick=()=>authMode(1);
+$('#authF').onsubmit=async e=>{e.preventDefault();
+  const l=$('#al').value.trim(),p=$('#ap').value,k=l.toLowerCase(),er=m=>$('#am').textContent=m,go=$('#aGo');
+  if(!/^[\wА-Яа-яЁё-]{3,16}$/.test(l))return er('Логин: 3–16 символов — буквы, цифры, _ или -');
+  if(p.length<4)return er('Пароль: минимум 4 символа');
+  go.disabled=1;go.textContent='Подождите…';er('');
+  try{const rec=await jget(),us=rec.users||{},h=await hs(k+p);let d,mig=0;
+    if(reg){if(us[k])return er('Этот логин уже занят');d=fresh();const o=LS('nazcoinClicker');
+      if(o&&!LS('nz_mig')){mig=1;Object.assign(d,{coins:o.coins||0,power:o.clickPower||1,energy:o.energy??100,max:o.maxEnergy||100,regen:o.energyRegen||1,promos:LS('usedPromoCodes')||[]});
+        for(const x in d.lv)d.lv[x]=o.upgrades?.[x]?.level||0;const z=LS('gameStats')||{};d.st={earned:z.totalEarned||0,clicks:z.totalClicks||0,time:z.playTime||0}}
+      d.t=Date.now();us[k]={n:l,h,d,t:d.t};rec.users=us;await jput(rec);
+      if(mig){LS('nz_mig',1);setTimeout(()=>toast('Старый прогресс перенесён в аккаунт'),900)}}
+    else{if(!us[k]||us[k].h!==h)return er('Неверный логин или пароль');d=us[k].d;d.t=us[k].t;const lc=LS('nz_d_'+k);if(lc&&lc.t>d.t)d=lc}
+    $('#ap').value='';start({k,n:us[k].n,h:us[k].h},d)}
+  catch{er('Нет связи с сервером — попробуйте ещё раз')}
+  finally{go.disabled=0;go.textContent=reg?'Создать аккаунт':'Войти'}};
+function start(s,d){U=s.k;NAME=s.n;SH=s.h;LS('nz_s',s);g=Object.assign(fresh(),d);LS('nz_d_'+U,g);
+  $('#authM').classList.remove('on');$('#who').textContent=NAME;$('#av').textContent=NAME[0].toUpperCase();
+  shop();boostsR();casesR();ev();upd();lab();balloons();$('#bn').hidden=!bd();$('#app').classList.add('on');
+  if(bd())setTimeout(()=>conf(innerWidth/2,innerHeight*.7,120),500);sync()}
+async function logout(){$('#setM').classList.remove('on');await sync();U=g=null;LS('nz_s',null);$('#app').classList.remove('on');authMode(0);$('#authM').classList.add('on')}
+
+// ---------- игра ----------
+function fly(v,x,y){const f=document.createElement('div');f.className='fly';f.textContent='+'+fmt(v)+T(' 🪙',' 💩');f.style.cssText=`left:${x}px;top:${y}px`;document.body.append(f);setTimeout(()=>f.remove(),1000)}
+$('#coin').onclick=e=>{if(!g)return;if(g.energy<1)return toast('Нет энергии — подождите, она восстанавливается');
+  const v=Math.floor((g.power+(on('mega_click')?100:0))*(on('double_coin')?2:1)*(bd()?1.5:1));
+  g.coins+=v;g.st.earned+=v;g.st.clicks++;if(!on('unlimited_energy'))g.energy--;
+  const r=$('#coin').getBoundingClientRect(),x=e.clientX||r.left+r.width/2,y=e.clientY||r.top+r.height/2;
+  fly(v,x,y);if(bd()&&g.st.clicks%25==0)conf(x,y,35);touch=1;upd()};
+function buy(k){const p=price(k);if(g.coins<p)return;g.coins-=p;g.lv[k]++;
+  if(k=='click_power')g.power+=5;if(k=='energy_capacity')g.max+=50;if(k=='energy_regen')g.regen+=5;
+  touch=1;shop();upd()}
+function boost(k){const b=BO[k];if(g.coins<b.p)return;g.coins-=b.p;g.boosts[k]=Math.max(Date.now(),g.boosts[k]||0)+b.t*1e3;touch=1;upd()}
+function shop(){$('#shop').innerHTML=Object.entries(UP).map(([k,u])=>`<button class="card" data-u="${k}"><i>${T(u.i,'💩')}</i><div><b>${T(u.n,u.g)}</b><small>${u.d} · ур. ${g.lv[k]}</small></div><span class="pr">${K(price(k))} ${T('🪙','💩')}</span></button>`).join('')}
+function boostsR(){$('#boosts').innerHTML=Object.entries(BO).map(([k,b])=>`<button class="card" id="b_${k}" data-b="${k}"><i>${T(b.i,'💩')}</i><div><b>${T(b.n,b.g)}</b><small>${b.d}</small></div><span class="pr"></span></button>`).join('')}
+$('#shop').onclick=e=>{const c=e.target.closest('[data-u]');c&&buy(c.dataset.u)};
+$('#boosts').onclick=e=>{const c=e.target.closest('[data-b]');c&&boost(c.dataset.b)};
+function upd(){if(!g)return;
+  $('#coins').innerHTML=fmt(g.coins)+`<small>${T('NazCoin','GovnoCoin')}</small>`;$('#pw').textContent=g.power;
+  $('#en').textContent=Math.floor(g.energy)+'/'+g.max;$('#ef').style.width=g.energy/g.max*100+'%';$('#coin').classList.toggle('dead',g.energy<1);$('#ring').style.setProperty('--e',g.energy/g.max*100);casesU();
+  $$('[data-u]').forEach(c=>c.classList.toggle('no',g.coins<price(c.dataset.u)));
+  for(const k in BO){const c=$('#b_'+k);if(!c)continue;const a=on(k);c.classList.toggle('act',a);c.classList.toggle('no',!a&&g.coins<BO[k].p);
+    c.querySelector('.pr').textContent=a?'⏳ '+Math.ceil((g.boosts[k]-Date.now())/1e3)+' с':K(BO[k].p)+' '+T('🪙','💩')}
+  if(!scr&&g.coins>=15000){scr=1;$('#scream').classList.add('on');setTimeout(()=>$('#scream').classList.remove('on'),5000)}}
+function lab(){$('#ttl').textContent=T('🪙 NazCoin Clicker','💩 Govno Clicker 💩');$('#l1').textContent=T('💪 Сила клика','💩 Сила говна');$('#l2').textContent=T('⚡ Энергия','💩 Размер толчка');
+  const t=$$('#tabs button');[['🛍️','Магазин'],['🚀','Бусты'],['🎁','Кейсы'],['🎉','Ивент'],['🏆','Топ']].forEach((x,i)=>t[i].innerHTML=`<span>${gov?'💩':x[0]}</span>${x[1]}`)}
+setInterval(()=>{if(!g)return;
+  if(g.energy<g.max)g.energy=Math.min(g.max,g.energy+g.regen);
+  for(let i=0;i<g.lv.auto_clicker&&g.energy>0;i++){g.coins+=g.power;g.st.earned+=g.power;if(!on('unlimited_energy'))g.energy--;touch=1}
+  g.st.time++;upd();if(g.st.time%5==0)save();if(g.st.time%120==0)sync()},1000);
+addEventListener('beforeunload',save);document.addEventListener('visibilitychange',()=>document.hidden&&(save(),sync()));
+// пасхалка: 5 кликов по заголовку
+$('#ttl').onclick=()=>{const n=Date.now();if(n-tl>1000)tc=0;tl=n;if(++tc>=5&&!gov){tc=0;gov=true;document.body.classList.add('gov');shop();boostsR();lab();upd();setTimeout(()=>{gov=false;document.body.classList.remove('gov');shop();boostsR();lab();upd()},3e4)}};
+
+// ---------- вкладки ----------
+function tabs(box,attr,fn){$$(box+' button').forEach(b=>b.onclick=()=>{$$(box+' button').forEach(x=>x.classList.toggle('on',x==b));$$(box==='#tabs'?'main>.panel':'#setM .panel').forEach(p=>p.hidden=p.id!=b.dataset[attr]);fn&&fn(b.dataset[attr])})}
+tabs('#tabs','t',t=>{if(t=='top')lbLoad();if(t=='events')ev();if(t=='cases')casesU()});tabs('#sTabs','s',s=>s=='s3'&&stats());
+
+// ---------- ивент ----------
+function ev(){if(!g)return;const d=Math.floor((Date.now()-BDAY_FROM)/864e5)+1;
+  $('#events').innerHTML=`<div class="ev bd"><div class="cake">🎂</div><h3>День рождения Назара!</h3><span class="tag live">Идёт без конца</span>
+   <p>21 октября — день рождения Назара! Пока идёт праздник, каждый клик даёт +50% монет, по экрану летят шарики, а конфетти сыплется каждые 25 кликов.</p>
+   <p>В «Кейсах» ждёт праздничный ежедневный подарок. Праздник идёт уже ${d} дн.</p>
+   <p>Промокод ивента: <b style="color:var(--g)">NAZ-BDAY</b></p></div>`}
+setInterval(()=>$('#events').hidden||ev(),6e4);
+
+// ---------- кейсы ----------
+const K=n=>n>=1e6?+(n/1e6).toFixed(2)+' млн':n>=1e3?+(n/1e3).toFixed(1)+' тыс':fmt(n);
+const RAR=[['Обычный','#b5a8d4'],['Редкий','#4d8dff'],['Эпический','#c26bff'],['Легендарный','#ffb020']];
+// приз: [вес, 'c' монеты | 'b' буст, от/доля длительности, до, редкость]
+const CASES={daily:{n:'Праздничный кейс',i:'🎂',s:'Бесплатно раз в 24 часа · монеты и бусты',p:0,pr:[[60,'c',25e3,12e4,0],[18,'b',.5,0,1],[16,'c',2e5,4e5,2],[6,'c',6e5,1e6,3]]},
+ paid:{n:'Золотой кейс',i:'💎',s:'До 3 млн монет · шанс на полный буст',p:25e4,pr:[[55,'c',6e4,14e4,0],[28,'c',15e4,3e5,1],[10,'b',1,0,2],[5,'c',5e5,9e5,2],[2,'c',3e6,3e6,3]]}};
+function roll(c){let x=Math.random()*c.pr.reduce((a,p)=>a+p[0],0);const p=c.pr.find(p=>(x-=p[0])<0)||c.pr[0];
+  if(p[1]=='c'){const v=Math.round((p[2]+Math.random()*(p[3]-p[2]))/1e3)*1e3;g.coins+=v;g.st.earned+=v;return{i:'🪙',t:'+'+fmt(v)+' монет',r:p[4]}}
+  const k=Object.keys(BO)[Math.floor(Math.random()*3)],b=BO[k],t=Math.round(b.t*p[2]);g.boosts[k]=Math.max(Date.now(),g.boosts[k]||0)+t*1e3;return{i:b.i,t:b.n+' на '+t+' с',r:p[4]}}
+function casesR(){$('#cases').innerHTML=Object.entries(CASES).map(([k,c])=>`<button class="card" data-k="${k}"><i>${c.i}</i><div><b>${c.n}</b><small>${c.s}</small></div><span class="pr"></span></button>`).join('');casesU()}
+function casesU(){if(!g)return;$$('[data-k]').forEach(e=>{const k=e.dataset.k,d=k=='daily',w=864e5-(Date.now()-g.daily),ok=d?w<=0:g.coins>=CASES[k].p;
+  e.classList.toggle('no',!ok);e.querySelector('.pr').textContent=d?(w<=0?'Открыть':new Date(w).toISOString().slice(11,19)):K(CASES[k].p)+' 🪙'})}
+$('#cases').onclick=e=>{const c=e.target.closest('[data-k]');c&&openCase(c.dataset.k)};
+function openCase(k){const c=CASES[k],d=k=='daily';if(d?Date.now()-g.daily<864e5:g.coins<c.p)return;
+  if(d)g.daily=Date.now();else g.coins-=c.p;const r=roll(c);touch=1;save();sync();upd();
+  const m=$('#caseM'),ic=['💰','🚀','⚡','💎','🎁','🪙','⭐'];let n=0;m.classList.add('on');
+  $('#caseB').innerHTML='<div class="reel">🎁</div><div class="muted">Открываем…</div>';
+  const t=setInterval(()=>{$('.reel').textContent=ic[n++%ic.length];if(n>22){clearInterval(t);const [nm,col]=RAR[r.r];
+    $('#caseB').innerHTML=`<div class="reel" style="animation:pop .5s">${r.i}</div><b style="color:${col};font-family:var(--d)">${nm}</b><h2>${r.t}</h2><button class="btn" onclick="$('#caseM').classList.remove('on')">Забрать</button>`;
+    conf(innerWidth/2,innerHeight/2,50+r.r*40)}},90)}
+
+// ---------- топ и облачная синхронизация ----------
+const lbRender=l=>{const m=['🥇','🥈','🥉'];$('#lbL').innerHTML=l.length?l.map((p,i)=>`<div class="lb ${NAME&&p.playerName.toLowerCase()==NAME.toLowerCase()?'me':''}"><em>${m[i]||i+1}</em><div><b>${esc(p.playerName)}</b><small>💪 ${p.clickPower} · 🪙 ${fmt(p.coins)}</small></div></div>`).join(''):'<div class="muted">Таблица пуста. Будь первым!</div>';$('#lbT').textContent='Обновлено: '+new Date().toLocaleTimeString('ru-RU')};
+const merge=(l,me)=>{const i=l.findIndex(p=>p.playerName===me.playerName);i<0?l.push(me):me.coins>l[i].coins&&(l[i]=me);return l.sort((a,b)=>b.coins-a.coins).slice(0,15)};
+async function lbLoad(){$('#lbL').innerHTML='<div class="muted">Загрузка топа…</div>';
+  try{lbRender((await jget()).leaderboard||[])}catch{toast('Не удалось загрузить общий топ');lbRender([])}}
+async function sync(manual){if(!U||busy)return;busy=1;save();
+  try{const rec=await jget(),us=rec.users||{},c=us[U];
+    if(c&&c.t>(g.t||0)){g=Object.assign(fresh(),c.d);g.t=c.t;LS('nz_d_'+U,g);shop();upd();toast('☁️ Загружен прогресс из облака')}
+    else if(cd||manual||!c){us[U]={n:NAME,h:SH,d:g,t:g.t||Date.now()};rec.users=us;
+      rec.leaderboard=merge(rec.leaderboard||[],{playerName:NAME,coins:g.coins,clickPower:g.power,timestamp:new Date().toISOString()});await jput(rec);cd=0;manual&&toast('☁️ Прогресс сохранён')}
+    lbRender(rec.leaderboard||[])}
+  catch{manual&&toast('Нет связи с сервером — прогресс сохранён на устройстве')}
+  busy=0}
+$('#lbR').onclick=lbLoad;$('#lbS').onclick=()=>sync(1);
+
+// ---------- настройки ----------
+const glow=c=>{document.documentElement.style.setProperty('--g',c);LS('nz_glow',c);$$('#sw button').forEach(b=>b.classList.toggle('on',b.dataset.c==c))};
+$('#sw').innerHTML=COLORS.map(c=>`<button data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('');
+$('#sw').onclick=e=>e.target.dataset.c&&glow(e.target.dataset.c);glow(LS('nz_glow')||COLORS[0]);
+function stats(){$('#i1').textContent=fmt(g.st.earned);$('#i2').textContent=fmt(g.st.clicks);$('#i3').textContent=fmt(g.st.time)+' сек'}
+$('#setBtn').onclick=()=>{if(g){stats();$('#setM').classList.add('on')}};$('#setX').onclick=()=>$('#setM').classList.remove('on');
+$('#pb').onclick=()=>{const c=$('#pi').value.toUpperCase().trim(),m=$('#pm');$('#pi').value='';
+  const r=(t,ok)=>{m.textContent=t;m.className='msg'+(ok?' ok':'')};
+  if(!c)return r('Введите промокод');if(g.promos.includes(c))return r('Этот промокод уже использован');if(!PROMO[c])return r('Неверный или несуществующий промокод');
+  g.coins+=PROMO[c];g.st.earned+=PROMO[c];g.promos.push(c);touch=1;save();sync();upd();r('✅ Активировано! +'+fmt(PROMO[c])+' монет',1)};
+$('#out').onclick=logout;
+$('#rst').onclick=()=>{if(!confirm('Сбросить все монеты и улучшения?'))return;const p=g.promos;g=Object.assign(fresh(),{promos:p});touch=1;save();sync();shop();upd();stats();toast('Прогресс сброшен')};
+
+// ---------- запуск ----------
+(function(){let p=0;const t=setInterval(()=>{p=Math.min(100,p+Math.random()*18);$('#lp').style.width=p+'%';
+  if(p>=100){clearInterval(t);setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').remove(),600);(s=>s&&s.k&&LS('nz_d_'+s.k)?start(s,LS('nz_d_'+s.k)):($('#authM').classList.add('on'),authMode(0)))(LS('nz_s'))},300)}},120)})();
+</script>
+</body>
+</html>
